@@ -6,6 +6,7 @@ export default {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                nickname: payload.nickname,
                 email: payload.email,
                 password: payload.password,
             })

@@ -1,12 +1,10 @@
 package study.studymatching_backend.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -55,4 +53,33 @@ public class Account {
 
     private boolean studyUpdatedByWeb;
 
+    @Builder
+    public Account(String email, String nickname, String password,
+                   boolean emailVerified, String emailCheckToken, LocalDateTime joinedAt,
+                   String bio, String url, String occupation, String location, String profileImage,
+                   boolean studyCreatedByEmail, boolean studyCreatedByWeb, boolean studyEnrollmentResultByEmail,
+                   boolean studyEnrollmentResultByWeb, boolean studyUpdatedByEmail, boolean studyUpdatedByWeb) {
+
+        this.email = email;
+        this.nickname = nickname;
+        this.password = password;
+        this.emailVerified = emailVerified;
+        this.emailCheckToken = emailCheckToken;
+        this.joinedAt = joinedAt;
+        this.bio = bio;
+        this.url = url;
+        this.occupation = occupation;
+        this.location = location;
+        this.profileImage = profileImage;
+        this.studyCreatedByEmail = studyCreatedByEmail;
+        this.studyCreatedByWeb = studyCreatedByWeb;
+        this.studyEnrollmentResultByEmail = studyEnrollmentResultByEmail;
+        this.studyEnrollmentResultByWeb = studyEnrollmentResultByWeb;
+        this.studyUpdatedByEmail = studyUpdatedByEmail;
+        this.studyUpdatedByWeb = studyUpdatedByWeb;
+    }
+
+    public void generateEmailCheckToken() {
+        this.emailCheckToken = UUID.randomUUID().toString();
+    }
 }

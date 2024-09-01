@@ -1,10 +1,13 @@
 package study.studymatching_backend.exception;
 
+import lombok.Getter;
 import study.studymatching_backend.exception.dto.ErrorTuple;
 
-public abstract class StudyMatchingException extends RuntimeException {
+import java.util.ArrayList;
+import java.util.List;
 
-    public final ErrorTuple errorTuple = new ErrorTuple();
+@Getter
+public abstract class StudyMatchingException extends RuntimeException {
 
     public StudyMatchingException(String message) {
         super(message);
@@ -16,8 +19,4 @@ public abstract class StudyMatchingException extends RuntimeException {
 
     public abstract String getStatusCode();
 
-    public void addValidation(String fieldName, String message) {
-        errorTuple.setFieldName(fieldName);
-        errorTuple.setMessage(message);
-    }
 }

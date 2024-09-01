@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import study.studymatching_backend.exception.StudyMatchingException;
 import study.studymatching_backend.exception.dto.ErrorResponse;
 import study.studymatching_backend.exception.dto.ErrorTuple;
 
@@ -34,5 +35,15 @@ public class ExceptionController {
                 }
         );
         return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+    }
+
+    @ExceptionHandler(StudyMatchingException.class)
+    public ResponseEntity<ErrorResponse> studyMatchingException(StudyMatchingException e) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(e.getStatusCode())
+                .message(e.getMessage())
+                .build();
+
+        return ResponseEntity.status(Integer.parseInt(e.getStatusCode())).body(errorResponse);
     }
 }

@@ -1,6 +1,6 @@
 package study.studymatching_backend.exception;
 
-public class AlreadyExistsEmailException extends StudyMatchingException{
+public class AlreadyExistsEmailException extends StudyMatchingException {
 
     public static final String MESSAGE = "이미 가입된 이메일입니다.";
 

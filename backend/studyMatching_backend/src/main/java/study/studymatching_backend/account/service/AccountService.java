@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import study.studymatching_backend.account.dto.AccountCreateRequest;
 import study.studymatching_backend.account.repository.AccountRepository;
 import study.studymatching_backend.domain.Account;
-import study.studymatching_backend.dto.ApiResponse;
+import study.studymatching_backend.exception.EmailNotFoundException;
 
 @Service
 @Transactional(readOnly = true)
@@ -30,14 +30,18 @@ public class AccountService {
 
     @Transactional
     public Long signup(AccountCreateRequest accountCreateRequest) {
-        String encodedPassword = passwordEncoder.encode(accountCreateRequest.getPassword());
-        Account account = accountCreateRequest.toEntity(encodedPassword);
-        Account newAccount = accountRepository.save(account);
-
+        Account newAccount = saveAccountWithEncodedPassword(accountCreateRequest);
         newAccount.generateEmailCheckToken();
         sendEmailCheckToken(newAccount);
 
         return newAccount.getId();
+    }
+
+    private Account saveAccountWithEncodedPassword(AccountCreateRequest accountCreateRequest) {
+        String encodedPassword = passwordEncoder.encode(accountCreateRequest.getPassword());
+        Account account = accountCreateRequest.toEntity(encodedPassword);
+
+        return accountRepository.save(account);
     }
 
     private void sendEmailCheckToken(Account newAccount) {
@@ -46,5 +50,13 @@ public class AccountService {
         mailMessage.setSubject("스터디매칭, 회원 가입 인증");
         mailMessage.setText("/check-email-token?token=" + newAccount.getEmailCheckToken() + "&email=" + newAccount.getEmail());
         javaMailSender.send(mailMessage);
+    }
+
+    public Account getByEmail(String email) {
+        return accountRepository.findByEmail(email).orElseThrow(EmailNotFoundException::new);
+    }
+
+    public int getTotalCount() {
+        return (int) accountRepository.count();
     }
 }

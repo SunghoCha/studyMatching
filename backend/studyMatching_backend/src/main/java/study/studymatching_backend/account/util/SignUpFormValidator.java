@@ -7,7 +7,7 @@ import org.springframework.validation.Validator;
 import study.studymatching_backend.account.dto.AccountCreateRequest;
 import study.studymatching_backend.account.service.AccountService;
 import study.studymatching_backend.exception.AlreadyExistsEmailException;
-import study.studymatching_backend.exception.dto.AlreadyExistsNicknameException;
+import study.studymatching_backend.exception.AlreadyExistsNicknameException;
 
 @Component
 @RequiredArgsConstructor

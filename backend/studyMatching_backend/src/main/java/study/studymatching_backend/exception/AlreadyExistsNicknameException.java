@@ -1,6 +1,4 @@
-package study.studymatching_backend.exception.dto;
-
-import study.studymatching_backend.exception.StudyMatchingException;
+package study.studymatching_backend.exception;
 
 public class AlreadyExistsNicknameException extends StudyMatchingException {
 

@@ -4,15 +4,18 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(of ="id")
+@EqualsAndHashCode(of = "id")
 public class Account {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
     private Long id;
 
@@ -23,6 +26,9 @@ public class Account {
     private String nickname;
 
     private String password;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    private Set<AccountRole> accountRoles = new LinkedHashSet<>();
 
     private boolean emailVerified;
 
@@ -38,7 +44,8 @@ public class Account {
 
     private String location;
 
-    @Lob @Basic(fetch = FetchType.EAGER)
+    @Lob
+    @Basic(fetch = FetchType.EAGER)
     private String profileImage;
 
     private boolean studyCreatedByEmail;
@@ -54,11 +61,11 @@ public class Account {
     private boolean studyUpdatedByWeb;
 
     @Builder
-    public Account(String email, String nickname, String password,
-                   boolean emailVerified, String emailCheckToken, LocalDateTime joinedAt,
-                   String bio, String url, String occupation, String location, String profileImage,
-                   boolean studyCreatedByEmail, boolean studyCreatedByWeb, boolean studyEnrollmentResultByEmail,
-                   boolean studyEnrollmentResultByWeb, boolean studyUpdatedByEmail, boolean studyUpdatedByWeb) {
+    public Account(String email, String nickname, String password, boolean emailVerified,
+                   String emailCheckToken, LocalDateTime joinedAt, String bio, String url,
+                   String occupation, String location, String profileImage, boolean studyCreatedByEmail,
+                   boolean studyCreatedByWeb, boolean studyEnrollmentResultByEmail, boolean studyEnrollmentResultByWeb,
+                   boolean studyUpdatedByEmail, boolean studyUpdatedByWeb) {
 
         this.email = email;
         this.nickname = nickname;

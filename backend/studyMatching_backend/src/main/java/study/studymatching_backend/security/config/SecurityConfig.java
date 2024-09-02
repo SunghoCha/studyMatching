@@ -1,4 +1,4 @@
-package study.studymatching_backend.config;
+package study.studymatching_backend.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

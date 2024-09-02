@@ -121,6 +121,7 @@ class AccountControllerTest {
                 .email("example1@gmail.com")
                 .password("1234")
                 .build();
+
         Account savedAccount = accountRepository.save(account);
         account.generateEmailCheckToken();
 

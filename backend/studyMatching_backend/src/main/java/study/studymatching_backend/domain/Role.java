@@ -17,8 +17,8 @@ public class Role {
     @Column(name = "role_id")
     private Long id;
 
-    @Column(unique = true)
-    private String roleName;
+    @Enumerated(EnumType.STRING)
+    private Authority authority;
 
     @Column(unique = true)
     private String roleDesc;
@@ -32,8 +32,8 @@ public class Role {
     private Set<AccountRole> accountRoles = new HashSet<>();
 
     @Builder
-    public Role(String roleName, String roleDesc, boolean isExpression) {
-        this.roleName = roleName;
+    public Role(Authority authority, String roleDesc, boolean isExpression) {
+        this.authority = authority;
         this.roleDesc = roleDesc;
         this.isExpression = isExpression;
     }

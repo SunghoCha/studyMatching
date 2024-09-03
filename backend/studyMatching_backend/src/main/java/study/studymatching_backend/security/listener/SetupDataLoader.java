@@ -11,6 +11,7 @@ import study.studymatching_backend.account.repository.AccountRepository;
 import study.studymatching_backend.account.repository.AccountRoleRepository;
 import study.studymatching_backend.domain.Account;
 import study.studymatching_backend.domain.AccountRole;
+import study.studymatching_backend.domain.Authority;
 import study.studymatching_backend.domain.Role;
 import study.studymatching_backend.security.repository.RoleRepository;
 
@@ -41,18 +42,20 @@ public class SetupDataLoader implements ApplicationListener {
 
     private void setupData() {
         setupRoles();
-        createAccountIfNotExist("admin", "admin@example.com", "1234", "ROLE_ADMIN");
+        createAccountIfNotExist("admin", "admin@example.com", "1234", Authority.ADMIN);
     }
 
-    private void createAccountIfNotExist(String nickname, String email, String password, String roleName) {
+    private void createAccountIfNotExist(String nickname, String email, String password, Authority authority) {
         Account account = accountRepository.findByNickname(nickname).orElseGet(() -> createAndSaveAccount(nickname, email, password));
+        Role role = roleRepository.findByAuthority(authority).orElseThrow(IllegalArgumentException::new);
+        addRoleToAccount(account, role);
+    }
 
-        Role role = roleRepository.findByRoleName(roleName).orElseThrow(IllegalArgumentException::new);
-        if (!accountRoleRepository.existsByAccountAndRole(account, role))
-        AccountRole accountRole = AccountRole.createAccountRole(account, role);
-        accountRoleRepository.save(accountRole);
-
-
+    private void addRoleToAccount(Account account, Role role) {
+        if (!accountRoleRepository.existsByAccountAndRole(account, role)) {
+            AccountRole accountRole = AccountRole.createAccountRole(account, role);
+            accountRoleRepository.save(accountRole);
+        }
     }
 
     private Account createAndSaveAccount(String nickname, String email, String password) {
@@ -66,22 +69,20 @@ public class SetupDataLoader implements ApplicationListener {
 
     private void setupRoles() {
         Role admin = Role.builder()
-                .roleName("ROLE_ADMIN")
+                .authority(Authority.ADMIN)
                 .roleDesc("관리자")
                 .build();
 
         Role manager = Role.builder()
-                .roleName("ROLE_MANAGER")
+                .authority(Authority.MANAGER)
                 .roleDesc("매니저")
                 .build();
 
         Role user = Role.builder()
-                .roleName("ROLE_USER")
+                .authority(Authority.USER)
                 .roleDesc("사용자")
                 .build();
 
         roleRepository.saveAll(List.of(admin, manager, user));
     }
-
-
 }

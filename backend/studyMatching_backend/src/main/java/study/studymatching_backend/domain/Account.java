@@ -2,11 +2,15 @@ package study.studymatching_backend.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -97,5 +101,11 @@ public class Account {
     public void completeRegistration(LocalDateTime now) {
         this.emailVerified = true;
         this.joinedAt = now;
+    }
+
+    public List<GrantedAuthority> getAuthorities() {
+        return accountRoles.stream()
+                .map(accountRole -> new SimpleGrantedAuthority(accountRole.getRole().getAuthority().getName()))
+                .collect(Collectors.toList());
     }
 }

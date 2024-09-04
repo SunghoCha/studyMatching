@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import study.studymatching_backend.security.manager.CustomRestAuthorizationManager;
+import study.studymatching_backend.security.provider.RestAuthenticationProvider;
 
 @Configuration
 @EnableWebSecurity
@@ -16,6 +17,7 @@ import study.studymatching_backend.security.manager.CustomRestAuthorizationManag
 public class SecurityConfig {
 
     private final CustomRestAuthorizationManager customRestAuthorizationManager;
+    private final RestAuthenticationProvider restAuthenticationProvider;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -37,7 +39,8 @@ public class SecurityConfig {
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().access(customRestAuthorizationManager)
-                );
+                )
+                .authenticationProvider(restAuthenticationProvider);
 
         return http.build();
     }

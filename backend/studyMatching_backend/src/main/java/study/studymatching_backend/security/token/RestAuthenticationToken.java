@@ -1,6 +1,7 @@
 package study.studymatching_backend.security.token;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
@@ -22,6 +23,10 @@ public class RestAuthenticationToken extends AbstractAuthenticationToken {
         this.principal = principal;
         this.credentials = credentials;
         setAuthenticated(false);
+    }
+
+    public static RestAuthenticationToken unauthenticated(String principal, String credentials) {
+        return new RestAuthenticationToken(principal, credentials);
     }
 
     @Override

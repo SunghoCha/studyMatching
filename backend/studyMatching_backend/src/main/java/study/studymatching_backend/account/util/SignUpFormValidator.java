@@ -5,15 +5,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import study.studymatching_backend.account.dto.AccountCreateRequest;
-import study.studymatching_backend.account.service.AccountService;
 import study.studymatching_backend.exception.AlreadyExistsEmailException;
 import study.studymatching_backend.exception.AlreadyExistsNicknameException;
+import study.studymatching_backend.security.service.RestUserDetailsService;
 
 @Component
 @RequiredArgsConstructor
 public class SignUpFormValidator implements Validator {
 
-    private final AccountService accountService;
+    private final RestUserDetailsService UserDetailsService;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -24,10 +24,10 @@ public class SignUpFormValidator implements Validator {
     public void validate(Object target, Errors errors) {
         //TODO email, nickname
         AccountCreateRequest accountCreateRequest = (AccountCreateRequest) target;
-        if (accountService.alreadyExistsEmail(accountCreateRequest)) {
+        if (UserDetailsService.alreadyExistsEmail(accountCreateRequest)) {
             throw new AlreadyExistsEmailException();
         }
-        if (accountService.alreadyExistsNickname(accountCreateRequest)) {
+        if (UserDetailsService.alreadyExistsNickname(accountCreateRequest)) {
             throw new AlreadyExistsNicknameException();
         }
     }

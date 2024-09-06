@@ -36,8 +36,8 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
     @Order(1)
+    @Bean
     public SecurityFilterChain restSecurityFilterChain(HttpSecurity http) throws Exception {
 
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);

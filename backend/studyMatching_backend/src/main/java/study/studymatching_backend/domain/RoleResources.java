@@ -22,4 +22,12 @@ public class RoleResources {
     @JoinColumn(name = "resources_id")
     private Resources resources;
 
+    public RoleResources(Resources resources, Role role) {
+        this.resources = resources;
+        this.role = role;
+    }
+
+    public static RoleResources CreateRoleResources(Resources resources, Role role) {
+        return new RoleResources(resources, role);
+    }
 }

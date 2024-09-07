@@ -13,15 +13,18 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 import study.studymatching_backend.account.dto.AccountCreateRequest;
+import study.studymatching_backend.account.dto.AccountRequest;
 import study.studymatching_backend.account.repository.AccountRepository;
 import study.studymatching_backend.domain.Account;
 import study.studymatching_backend.exception.EmailNotFoundException;
+import study.studymatching_backend.security.service.RestUserDetailsService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.then;
@@ -43,6 +46,12 @@ class AccountControllerTest {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private RestUserDetailsService restUserDetailsService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void clean() {
@@ -150,6 +159,36 @@ class AccountControllerTest {
                         .param("email", "example1@gmail.com"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("로그인 성공 테스트")
+    void login_with_correct_input() throws Exception {
+        // given
+        AccountCreateRequest accountCreateRequest = AccountCreateRequest.builder()
+                .nickname("nickname1")
+                .email("example1@gmail.com")
+                .password("1234")
+                .build();
+        String encodedPassword = passwordEncoder.encode(accountCreateRequest.getPassword());
+        Account account = accountCreateRequest.toEntity(encodedPassword);
+        accountRepository.save(account);
+
+        AccountRequest accountRequest = AccountRequest.builder()
+                .email("example1@gmail.com")
+                .password("1234")
+                .build();
+        String json = objectMapper.writeValueAsString(accountRequest );
+        // when
+        mockMvc.perform(MockMvcRequestBuilders.post("/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .with(csrf())
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+
+        // then
     }
 
 }

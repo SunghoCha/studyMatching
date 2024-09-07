@@ -1,4 +1,4 @@
-package study.studymatching_backend.account.util;
+package study.studymatching_backend.account.util.validator;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

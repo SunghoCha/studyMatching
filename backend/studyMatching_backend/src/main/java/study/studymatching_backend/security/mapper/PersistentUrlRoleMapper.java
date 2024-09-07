@@ -17,7 +17,7 @@ public class PersistentUrlRoleMapper {
         return roleResourcesRepository.findAll().stream()
                 .collect(Collectors.toMap(
                         roleResources -> roleResources.getResources().getResourceName(),
-                        roleResources -> roleResources.getRole().getAuthority().getName()
+                        roleResources -> roleResources.getRole().getRoleName()
                 ));
     }
 }

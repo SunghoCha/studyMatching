@@ -4,16 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.lang.Nullable;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.util.StringUtils;
+import study.studymatching_backend.account.dto.AccountRequest;
 import study.studymatching_backend.security.token.RestAuthenticationToken;
 
 import java.io.IOException;
 
+@Slf4j
 public class RestAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -29,24 +31,13 @@ public class RestAuthenticationFilter extends AbstractAuthenticationProcessingFi
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
         if (this.postOnly && !request.getMethod().equals("POST")) {
             throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
-        } else {
-            String email = this.obtainUsername(request);
-            email = email != null ? email.trim() : "";
-            String password = this.obtainPassword(request);
-            password = password != null ? password : "";
-            RestAuthenticationToken authRequest = RestAuthenticationToken.unauthenticated(email, password);
-
-            return this.getAuthenticationManager().authenticate(authRequest);
         }
-    }
+        AccountRequest accountRequest = objectMapper.readValue(request.getReader(), AccountRequest.class);
+        if (!StringUtils.hasText(accountRequest.getEmail()) || !StringUtils.hasText(accountRequest.getPassword())) {
+            throw new AuthenticationServiceException("Input is not provided");
+        }
+        RestAuthenticationToken authRequest = RestAuthenticationToken.unauthenticated(accountRequest.getEmail(), accountRequest.getPassword());
 
-    @Nullable
-    protected String obtainPassword(HttpServletRequest request) {
-        return request.getParameter(this.passwordParameter);
-    }
-
-    @Nullable
-    protected String obtainUsername(HttpServletRequest request) {
-        return request.getParameter(this.emailParameter);
+        return this.getAuthenticationManager().authenticate(authRequest);
     }
 }

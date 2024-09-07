@@ -10,10 +10,13 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.stereotype.Component;
 import study.studymatching_backend.account.dto.AccountCreateResponse;
+import study.studymatching_backend.account.dto.AccountResponse;
 
 import java.io.IOException;
 
+@Component
 public class RestAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -22,7 +25,7 @@ public class RestAuthenticationSuccessHandler implements AuthenticationSuccessHa
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException {
 
-        AccountCreateResponse accountResponse = (AccountCreateResponse) authentication.getPrincipal();
+        AccountResponse accountResponse = (AccountResponse) authentication.getPrincipal();
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         objectMapper.writeValue(response.getWriter(), accountResponse);

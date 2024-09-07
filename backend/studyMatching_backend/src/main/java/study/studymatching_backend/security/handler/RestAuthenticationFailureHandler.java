@@ -9,9 +9,11 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+@Component
 public class RestAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -24,7 +26,7 @@ public class RestAuthenticationFailureHandler implements AuthenticationFailureHa
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         if (exception instanceof BadCredentialsException) {
-            objectMapper.writeValue(response.getWriter(), "Invalid nickname or password");
+            objectMapper.writeValue(response.getWriter(), "Invalid input");
         } else {
             objectMapper.writeValue(response.getWriter(), "Authentication failed");
         }

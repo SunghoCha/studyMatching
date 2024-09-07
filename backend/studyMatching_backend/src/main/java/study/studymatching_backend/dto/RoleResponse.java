@@ -8,18 +8,18 @@ import study.studymatching_backend.domain.Authority;
 @Getter
 public class RoleResponse {
 
-    private final Authority authority;
+    private final String roleName;
     private final String roleDesc;
 
     @Builder
-    public RoleResponse(Authority authority, String roleDesc) {
-        this.authority = authority;
+    public RoleResponse(String roleName, String roleDesc) {
+        this.roleName = roleName;
         this.roleDesc = roleDesc;
     }
 
     public static RoleResponse of(AccountRole accountRole) {
         return RoleResponse.builder()
-                .authority(accountRole.getRole().getAuthority())
+                .roleName(accountRole.getRole().getRoleName())
                 .roleDesc(accountRole.getRole().getRoleDesc())
                 .build();
     }

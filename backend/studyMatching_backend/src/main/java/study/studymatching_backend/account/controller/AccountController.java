@@ -8,7 +8,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import study.studymatching_backend.account.dto.AccountCreateRequest;
 import study.studymatching_backend.account.dto.AccountCreateResponse;
-import study.studymatching_backend.account.util.SignUpFormValidator;
+import study.studymatching_backend.account.util.validator.SignUpFormValidator;
 import study.studymatching_backend.domain.Account;
 import study.studymatching_backend.security.service.RestUserDetailsService;
 

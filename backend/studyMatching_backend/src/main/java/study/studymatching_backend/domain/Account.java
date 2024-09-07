@@ -105,7 +105,7 @@ public class Account {
 
     public List<GrantedAuthority> getAuthorities() {
         return accountRoles.stream()
-                .map(accountRole -> new SimpleGrantedAuthority(accountRole.getRole().getAuthority().getName()))
+                .map(accountRole -> new SimpleGrantedAuthority(accountRole.getRole().getRoleName()))
                 .collect(Collectors.toList());
     }
 }

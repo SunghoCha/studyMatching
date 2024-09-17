@@ -25,12 +25,6 @@ public class AccountController {
         webDataBinder.addValidators(signUpFormValidator);
     }
 
-    @GetMapping("/")
-    public String home() {
-
-        return "home";
-    }
-
     @PostMapping("/sign-up")
     public ResponseEntity<Long> signUpForm(@Valid @RequestBody AccountCreateRequest accountCreateRequest) {
         Long id = userDetailsService.signup(accountCreateRequest);

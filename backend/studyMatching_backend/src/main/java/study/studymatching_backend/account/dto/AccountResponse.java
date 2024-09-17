@@ -1,5 +1,6 @@
 package study.studymatching_backend.account.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -18,6 +19,7 @@ public class AccountResponse {
     private Long id;
     private String nickname;
     private String email;
+    @JsonIgnore
     private String password;
     private Set<RoleResponse> roles;
 

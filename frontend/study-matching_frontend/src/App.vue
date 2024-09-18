@@ -1,6 +1,6 @@
 <template>
   <SvgIcon></SvgIcon>
-  <TheNavigation></TheNavigation>
+
   <TheHeader></TheHeader>
   <router-view/>
   <TheFooter></TheFooter>
@@ -12,10 +12,12 @@
 import TheHeader from "@/components/layout/TheHeader.vue";
 import TheFooter from "@/components/layout/TheFooter.vue";
 import SvgIcon from "@/components/layout/SvgIcon.vue";
-import TheNavigation from "@/components/layout/TheNavigation.vue";
 
 export default {
-  components: {TheNavigation, SvgIcon, TheFooter, TheHeader}
+  components: {
+    SvgIcon,
+    TheFooter,
+    TheHeader}
 
 }
 </script>

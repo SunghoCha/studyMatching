@@ -6,12 +6,6 @@
   <div class="form-signin w-100 m-auto">
     <form @submit.prevent="submitForm">
       <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
-
-      <div class="form-floating" :class="{invalid: !nickname.isValid}">
-        <input type="text" class="form-control" id="floatingInput" placeholder="Nickname" v-model.trim="nickname.val" @blur="clearValidity('nickname')">
-        <label for="floatingInput">Nickname</label>
-        <p v-if="!nickname.isValid">유효한 닉네임을 입력해주세요.</p>
-      </div>
       <div class="form-floating" :class="{invalid: !email.isValid}">
         <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" v-model.trim="email.val" @blur="clearValidity('email')">
         <label for="floatingInput">Email address</label>
@@ -40,10 +34,6 @@ export default {
   name: "TheLogin",
   data() {
     return {
-      nickname: {
-        val:'',
-        isValid: true
-      },
       email: {
         val:'',
         isValid: true
@@ -62,10 +52,7 @@ export default {
     },
     validateForm() {
       this.formIsValid = true;
-      if (this.nickname.val === '') {
-        this.nickname.isValid = false;
-        this.formIsValid = false;
-      }
+
       if (this.email.val === '') {
         this.email.isValid = false;
         this.formIsValid = false;
@@ -83,7 +70,6 @@ export default {
       }
 
       const formData = {
-        nickname: this.nickname.val,
         email: this.email.val,
         password: this.password.val,
       };

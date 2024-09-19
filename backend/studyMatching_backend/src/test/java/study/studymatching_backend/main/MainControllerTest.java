@@ -7,6 +7,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -16,8 +19,10 @@ import study.studymatching_backend.account.dto.AccountResponse;
 import study.studymatching_backend.domain.AccountRole;
 import study.studymatching_backend.dto.RoleResponse;
 import study.studymatching_backend.security.details.RestUserDetails;
+import study.studymatching_backend.security.token.RestAuthenticationToken;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,9 +35,9 @@ class MainControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    @WithMockUser(username = "testUser", roles = "USER")
     @DisplayName("인증된 사용자로 요청시 Account 반환")
     void authorization_with_correct_authority() throws Exception {
+        // given
         AccountResponse accountResponse = AccountResponse.builder()
                 .nickname("testNickname")
                 .email("testEmail")
@@ -42,19 +47,24 @@ class MainControllerTest {
                         .build()))
                 .build();
 
-        RestUserDetails.builder()
+        RestUserDetails userDetails = RestUserDetails.builder()
                 .accountResponse(accountResponse)
-                .authorities()
+                .authorities(List.of(new SimpleGrantedAuthority("ROLE_USER")))
                 .build();
 
-        // given
+        RestAuthenticationToken authenticationToken = new RestAuthenticationToken(userDetails.getAuthorities(), userDetails, null);
+        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+        securityContext.setAuthentication(authenticationToken);
+        SecurityContextHolder.setContext(securityContext);
+
+        // expected
         mockMvc.perform(MockMvcRequestBuilders.get("/")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                // .andExpect(MockMvcResultMatchers.jsonPath())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.nickname").value("testNickname"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("testEmail"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.roles[0].roleName").value("ROLE_USER"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.roles[0].roleDesc").value("사용자"))
                 .andDo(MockMvcResultHandlers.print());
-        // when
-
-        // then
     }
 }

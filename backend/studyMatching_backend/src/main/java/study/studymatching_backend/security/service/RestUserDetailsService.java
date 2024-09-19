@@ -14,8 +14,10 @@ import study.studymatching_backend.account.dto.AccountCreateRequest;
 import study.studymatching_backend.account.dto.AccountResponse;
 import study.studymatching_backend.account.repository.AccountRepository;
 import study.studymatching_backend.domain.Account;
+import study.studymatching_backend.exception.AlreadyExistsEmailException;
 import study.studymatching_backend.exception.EmailNotFoundException;
 import study.studymatching_backend.exception.InvalidTokenException;
+import study.studymatching_backend.infra.mail.EmailService;
 import study.studymatching_backend.security.details.RestUserDetails;
 
 import java.time.LocalDateTime;
@@ -29,6 +31,7 @@ public class RestUserDetailsService implements UserDetailsService {
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
     private final JavaMailSender javaMailSender;
+    private final EmailService emailService;
 
     @Override
     @Transactional(readOnly = true)
@@ -93,5 +96,13 @@ public class RestUserDetailsService implements UserDetailsService {
 
     private Account getByEmail(String email) {
         return accountRepository.findByEmail(email).orElseThrow(EmailNotFoundException::new);
+    }
+
+    public void sendSignUpConfirmEmail(String email) {
+        boolean alreadyExistsEmail = alreadyExistsEmail(AccountCreateRequest.builder().email(email).build());
+        if (alreadyExistsEmail) {
+            throw new AlreadyExistsEmailException(); 
+        }
+        // 이메일 전송 로직
     }
 }

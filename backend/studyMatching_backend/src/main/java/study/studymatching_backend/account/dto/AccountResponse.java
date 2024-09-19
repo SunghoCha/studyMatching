@@ -29,6 +29,7 @@ public class AccountResponse {
         this.nickname = nickname;
         this.email = email;
         this.password = password;
+        this.roles = roles;
     }
 
     public static AccountResponse of(Account account) {
@@ -42,4 +43,5 @@ public class AccountResponse {
                         .collect(Collectors.toSet()))
                 .build();
     }
+
 }

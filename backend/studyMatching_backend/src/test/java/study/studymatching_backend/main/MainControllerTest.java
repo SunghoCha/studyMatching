@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import study.studymatching_backend.WithAccount;
 import study.studymatching_backend.account.dto.AccountResponse;
 import study.studymatching_backend.domain.AccountRole;
 import study.studymatching_backend.dto.RoleResponse;
@@ -63,6 +64,22 @@ class MainControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.nickname").value("testNickname"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("testEmail"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.roles[0].roleName").value("ROLE_USER"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.roles[0].roleDesc").value("사용자"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @WithAccount(email = "email")
+    @DisplayName("인증된 사용자로 요청시 Account 반환")
+    void authorization_with_correct_authority2() throws Exception {
+
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.get("/")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.nickname").value("testNickname"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("email"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.roles[0].roleName").value("ROLE_USER"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.roles[0].roleDesc").value("사용자"))
                 .andDo(MockMvcResultHandlers.print());

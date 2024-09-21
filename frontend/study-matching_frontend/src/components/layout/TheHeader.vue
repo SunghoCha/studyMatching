@@ -46,9 +46,17 @@
 <script>
 export default {
   name: "TheHeader",
+  data() {
+    return {
+      loggedIn: false,
+    }
+  },
   computed: {
+    isLoggedIn() {
+      return this.loggedIn;
+    }
+  },
 
-  }
 }
 </script>
 

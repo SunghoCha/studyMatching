@@ -3,7 +3,6 @@
     <main>
       <div class="py-5 text-center">
         <img class="d-block mx-auto mb-4" src="/docs/5.3/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57">
-
         <h2>스터디카페 회원이 되어주세요.</h2>
         <p class="lead"></p>
       </div>
@@ -15,34 +14,36 @@
             <div class="row g-3">
               <div class="col-sm-8">
                 <div class="form-floating">
-                  <input type="text" class="form-control input-sm input-group" id="nickname" placeholder="Nickname" v-model.trim="nickname.val" @blur="clearValidity('nickname')">
+                  <input type="text" class="form-control form-control-sm" id="nickname" placeholder="Nickname" v-model.trim="nickname.val" @blur="clearValidity('nickname')">
                   <label for="nickname">Nickname</label>
                   <p v-if="!nickname.isValid">유효한 닉네임을 입력해주세요.</p>
                 </div>
               </div>
               <div class="col-sm-4">
-                <button type="button" class="btn btn-secondary btn-sm">중복확인</button>
+                <button type="button" class="btn btn-primary btn-custom" @click="checkNickname">중복확인</button>
               </div>
 
               <div class="col-sm-8">
                 <div class="form-floating">
-                  <input type="email" class="form-control input-sm" id="email" placeholder="name@example.com" v-model.trim="email.val" @blur="clearValidity('email')">
+                  <input type="email" class="form-control form-control-sm" id="email" placeholder="name@example.com" v-model.trim="email.val" @blur="clearValidity('email')">
                   <label for="email">Email address</label>
                   <p v-if="!email.isValid">유효한 이메일을 입력해주세요.</p>
                 </div>
               </div>
               <div class="col-sm-4">
-                <button type="button" class="btn btn-secondary btn-sm">인증하기</button>
+                <button type="button" class="btn btn-primary btn-custom">인증하기</button>
               </div>
 
               <div class="col-sm-8">
                 <div class="form-floating">
-                  <input type="password" class="form-control input-sm" id="password" placeholder="Password" v-model.trim="password.val" @blur="clearValidity('password')">
+                  <input type="password" class="form-control form-control-sm" id="password" placeholder="Password" v-model.trim="password.val" @blur="clearValidity('password')">
                   <label for="password">Password</label>
                   <p v-if="!password.isValid">유효한 비밀번호를 입력해주세요.</p>
                 </div>
               </div>
-              <div class="col-sm-4"></div> </div>
+              <div class="col-sm-4"></div>
+            </div>
+
             <hr class="my-4">
             <button class="w-100 btn btn-primary btn-lg" type="submit">가입하기</button>
           </form>
@@ -70,6 +71,7 @@ export default {
         isValid: true
       },
       formIsValid: true,
+      nicknameIsValid: false,
       error: null,
     };
   },
@@ -79,16 +81,20 @@ export default {
     },
     validateForm() {
       this.formIsValid = true;
-      if (this.nickname.val === '') {
-        this.nickname.isValid = false;
-        this.formIsValid = false;
-      }
+      this.validateNickname();
       if (this.email.val === '') {
         this.email.isValid = false;
         this.formIsValid = false;
       }
       if (this.password.val === '') {
         this.password.isValid = false;
+        this.formIsValid = false;
+      }
+    },
+    validateNickname() {
+      this.formIsValid = true;
+      if (this.nickname.val === '') {
+        this.nickname.isValid = false;
         this.formIsValid = false;
       }
     },
@@ -105,34 +111,43 @@ export default {
         password: this.password.val,
       };
       console.log(formData);
-      // 로그인 부분 구현
+
       try {
         await this.$store.dispatch('auth/signup', formData)
         this.$router.push('/email-check');
       } catch (err) {
         this.error = err.message || "인증에 실패하였습니다."
       }
-    }
+    },
+    async checkNickname() {
+      this.validateNickname();
+
+      if (!this.formIsValid) {
+        return;
+      }
+      const nicknameData = {
+        nickname: this.nickname.val,
+
+      };
+      console.log(nicknameData);
+
+      try {
+        await this.$store.dispatch('auth/checkNickname', nicknameData)
+        this.nicknameIsValid = this.$store.isValidNickName;
+      } catch (err) {
+        this.error = err.message || " 중복체크 실패"
+      }
+
+    },
   }
 
 }
 </script>
-.input-sm {
-width: 100%;
-max-width: 300px;
-}
-.input-group {
---input-height: 36px; /* 원하는 높이 설정 */
-display: flex;
-align-items: center;
-}
 
-.form-control,
-.btn {
-height: var(--input-height);
-padding: 0.375rem 0.75rem;
-}
 
 <style scoped>
-
+.col-sm-4 {
+  display: flex;
+  align-items: center;
+}
 </style>

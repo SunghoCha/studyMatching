@@ -10,7 +10,7 @@ export default {
       user: {
         company: 'Light dashboard',
         username: 'michael23',
-        email: '',
+        email: 'example@gmail.com',
         firstName: 'Mike',
         lastName: 'Andrew',
         address: 'Melbourne, Australia',
@@ -20,7 +20,28 @@ export default {
         aboutMe: `Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo.`
       }
     }
-  }
+  },
+  watch: {
+    'user.username'(newValue) {
+      console.log('EditProfileForm - Username updated in parent:', newValue);
+    }
+  },
+  created() {
+    console.log('parent component created');
+  },
+  mounted() {
+    console.log('parent component mounted');
+  },
+  methods: {
+    onChangeUserName(val) {
+      this.user.username = val;
+      console.log("EditProfileForm - username changed")
+    },
+    onChangeEmail(val) {
+      this.user.username = val;
+      console.log("EditProfileForm - email changed")
+    }
+  },
 }
 </script>
 
@@ -43,14 +64,16 @@ export default {
           <base-input type="text"
                       label="Username"
                       placeholder="Username"
-                      v-model="user.username">
+                      :value="user.username"
+                      @input="onChangeUserName">
           </base-input>
         </div>
         <div class="col-md-4">
           <base-input type="email"
                       label="Email"
                       placeholder="Email"
-                      v-model="user.email">
+                      :value="user.email"
+                      @input="onChangeEmail">
           </base-input>
         </div>
       </div>

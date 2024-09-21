@@ -55,4 +55,28 @@ export default {
             userId: responseData,
         });
     },
+    async checkNickname(context, payload) {
+        const response = await fetch('http://localhost:8080/check-nickname', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: payload.nickname,
+            })
+        });
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+            console.log(responseData);
+            const error = new Error(responseData.message || 'Failed to check nickname. Check your nickname.');
+            throw error;
+        }
+
+        console.log(responseData);
+        context.commit('setCheckNickname', {
+            isValidNickname: responseData,
+        });
+    },
 }

@@ -10,14 +10,13 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import study.studymatching_backend.exception.dto.EmailSendFailException;
 
+//@Profile("dev")
 @Slf4j
-@Profile("dev")
 @Component
 @RequiredArgsConstructor
 public class HtmlEmailService implements EmailService{
 
     private final JavaMailSender javaMailSender;
-
 
     @Override
     public void sendEmail(EmailMessage emailMessage) throws MessagingException {

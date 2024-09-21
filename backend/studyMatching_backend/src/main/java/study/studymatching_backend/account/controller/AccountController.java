@@ -46,5 +46,6 @@ public class AccountController {
     @GetMapping("/resend-confirm-email")
     public String resendConfirmEmail(String email) {
         userDetailsService.sendSignUpConfirmEmail(email);
+        return "수정 중";
     }
 }

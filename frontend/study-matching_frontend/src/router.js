@@ -3,6 +3,7 @@ import TheHome from "@/pages/TheHome.vue";
 import TheLogin from "@/pages/TheLogin.vue";
 import TheSignUp from "@/pages/TheSignUp.vue";
 import TheEmailCheck from "@/pages/TheEmailCheck.vue";
+import UserProfile from "@/pages/UserProfile.vue";
 
 
 const router =  createRouter({
@@ -12,7 +13,8 @@ const router =  createRouter({
         { path: '/home', component: TheHome },
         { path: '/login', component: TheLogin },
         { path: '/signup', component: TheSignUp },
-        { path: '/email-check', component: TheEmailCheck}
+        { path: '/email-check', component: TheEmailCheck},
+        { path: '/profile', component: UserProfile}
     ]
 });
 

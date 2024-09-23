@@ -11,12 +11,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import study.studymatching_backend.account.dto.AccountCreateRequest;
+import study.studymatching_backend.account.dto.AccountEditRequest;
 import study.studymatching_backend.account.dto.AccountResponse;
+import study.studymatching_backend.account.dto.PasswordEditRequest;
 import study.studymatching_backend.account.repository.AccountRepository;
 import study.studymatching_backend.domain.Account;
 import study.studymatching_backend.exception.AlreadyExistsEmailException;
 import study.studymatching_backend.exception.EmailNotFoundException;
 import study.studymatching_backend.exception.InvalidTokenException;
+import study.studymatching_backend.exception.dto.AccountNotFoundException;
 import study.studymatching_backend.infra.mail.EmailService;
 import study.studymatching_backend.security.details.RestUserDetails;
 
@@ -104,5 +107,25 @@ public class RestUserDetailsService implements UserDetailsService {
             throw new AlreadyExistsEmailException(); 
         }
         // 이메일 전송 로직
+    }
+
+    // 엔티티에 setter 사용 x
+    // 엔티티가 dto에 의존? 의존하지 않으면 일일히 필드값 전달? 그렇다고 일일이 필드값 여러 개 전달하면 더 비효율적 -> 범용적인 dto or 클래스에 의존하도록 하자
+    // 엔티티의 전체 필드 중 일부 필드만 수정된 결과를 선택적으로 반영하고 싶음
+    // 조건문으로 null이나 빈 값이 아닐 때만 반영.
+    public AccountResponse updateAccount(Long id, AccountEditRequest accountEditRequest) {
+        Account account = accountRepository.findById(id).orElseThrow(AccountNotFoundException::new);
+        account.update(accountEditRequest); // 엔티티가 특정dto에 대해서 알게 되지만 이게 최선인듯. dto를 좀 더 수정에 특화된 형태의 클래스로 변경가능할수도
+
+        return AccountResponse.of(account);
+
+    }
+
+    public AccountResponse updateAccountPassword(Long id, PasswordEditRequest passwordEditRequest) {
+        Account account = accountRepository.findById(id).orElseThrow(AccountNotFoundException::new);
+        String encodedPassword = passwordEncoder.encode(passwordEditRequest.getNewPassword());
+        account.updatePassword(encodedPassword);
+
+        return AccountResponse.of(account);
     }
 }

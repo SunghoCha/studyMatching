@@ -17,7 +17,7 @@ public class SignUpFormValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return clazz.isAssignableFrom(AccountCreateRequest.class);
+        return AccountCreateRequest.class.isAssignableFrom(clazz);
     }
 
     @Override

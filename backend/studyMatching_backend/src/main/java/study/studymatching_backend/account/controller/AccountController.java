@@ -6,10 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import study.studymatching_backend.account.dto.AccountCreateRequest;
-import study.studymatching_backend.account.dto.AccountCreateResponse;
-import study.studymatching_backend.account.dto.AccountResponse;
-import study.studymatching_backend.account.util.annotation.CurrentUser;
+import study.studymatching_backend.account.dto.*;
+import study.studymatching_backend.account.util.validator.PasswordFormValidator;
 import study.studymatching_backend.account.util.validator.SignUpFormValidator;
 import study.studymatching_backend.domain.Account;
 import study.studymatching_backend.security.service.RestUserDetailsService;
@@ -20,12 +18,16 @@ import study.studymatching_backend.security.service.RestUserDetailsService;
 public class AccountController {
 
     private final SignUpFormValidator signUpFormValidator;
+    private final PasswordFormValidator passwordFormValidator;
     private final RestUserDetailsService userDetailsService;
 
     @InitBinder("accountCreateRequest")
     public void initBinder(WebDataBinder webDataBinder) {
         webDataBinder.addValidators(signUpFormValidator);
     }
+
+    @InitBinder("passwordEditRequest")
+    public void InitBinder(WebDataBinder webDataBinder) { webDataBinder.addValidators(passwordFormValidator);}
 
     @PostMapping("/sign-up")
     public ResponseEntity<Long> signUpForm(@Valid @RequestBody AccountCreateRequest accountCreateRequest) {
@@ -44,8 +46,26 @@ public class AccountController {
     }
 
     @GetMapping("/resend-confirm-email")
-    public String resendConfirmEmail(String email) {
+    public String resendConfirmEmail(@RequestParam String email) {
         userDetailsService.sendSignUpConfirmEmail(email);
+        // TODO 이메일 전송 기능 미완성
         return "수정 중";
     }
+
+    @PatchMapping("/profile/{accountId}")
+    public ResponseEntity<AccountResponse> editProfile(@PathVariable(name = "accountId") Long id, @RequestBody AccountEditRequest accountEditRequest) {
+        AccountResponse response = userDetailsService.updateAccount(id, accountEditRequest);
+        // TODO AccountResponse 필드값 수정 필요
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PatchMapping("/password/{accountId}")
+    public ResponseEntity<AccountResponse> editPassword(@PathVariable(name = "accountId") Long id, @Valid @RequestBody PasswordEditRequest passwordEditRequest) {
+        AccountResponse response = userDetailsService.updateAccountPassword(id, passwordEditRequest);
+        // TODO AccountResponse 필드값 수정 필요
+
+        return ResponseEntity.ok().body(response);
+    }
 }
+

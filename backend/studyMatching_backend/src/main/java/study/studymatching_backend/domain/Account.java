@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import study.studymatching_backend.account.dto.AccountEditRequest;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
@@ -64,7 +65,7 @@ public class Account {
 
     private boolean studyUpdatedByWeb;
 
-    @Builder
+    @Builder(toBuilder = true)
     public Account(String email, String nickname, String password, boolean emailVerified,
                    String emailCheckToken, LocalDateTime joinedAt, String bio, String url,
                    String occupation, String location, String profileImage, boolean studyCreatedByEmail,
@@ -107,5 +108,24 @@ public class Account {
         return accountRoles.stream()
                 .map(accountRole -> new SimpleGrantedAuthority(accountRole.getRole().getRoleName()))
                 .collect(Collectors.toList());
+    }
+
+    public void update(AccountEditRequest accountEditRequest) {
+        if (accountEditRequest.getBio() != null && !accountEditRequest.getBio().isBlank()) {
+            this.bio = accountEditRequest.getBio();
+        }
+        if (accountEditRequest.getUrl() != null && !accountEditRequest.getUrl().isBlank()) {
+            this.url = accountEditRequest.getUrl();
+        }
+        if (accountEditRequest.getOccupation() != null && !accountEditRequest.getOccupation().isBlank()) {
+            this.occupation = accountEditRequest.getOccupation();
+        }
+        if (accountEditRequest.getLocation() != null && !accountEditRequest.getLocation().isBlank()) {
+            this.location = accountEditRequest.getLocation();
+        }
+    }
+
+    public void updatePassword(String encodedPassword) {
+        this.password = encodedPassword;
     }
 }

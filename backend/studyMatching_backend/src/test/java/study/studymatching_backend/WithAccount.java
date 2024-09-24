@@ -9,6 +9,8 @@ import java.lang.annotation.RetentionPolicy;
 @WithSecurityContext(factory = WithAccountSecurityContextFactory.class)
 public @interface WithAccount {
 
+    String password() default "1234";
+
     String nickname() default "testNickname";
 
     String email() default "testEmail";

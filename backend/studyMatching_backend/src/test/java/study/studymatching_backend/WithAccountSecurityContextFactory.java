@@ -1,37 +1,34 @@
 package study.studymatching_backend;
 
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
-import study.studymatching_backend.account.dto.AccountResponse;
-import study.studymatching_backend.dto.RoleResponse;
-import study.studymatching_backend.security.details.RestUserDetails;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
+import study.studymatching_backend.account.dto.AccountCreateRequest;
+import study.studymatching_backend.security.service.RestUserDetailsService;
 import study.studymatching_backend.security.token.RestAuthenticationToken;
 
-import java.util.List;
-import java.util.Set;
-
-
+@RequiredArgsConstructor
 public class WithAccountSecurityContextFactory implements WithSecurityContextFactory<WithAccount> {
+
+    private final RestUserDetailsService userDetailsService;
 
     @Override
     public SecurityContext createSecurityContext(WithAccount annotation) {
-        AccountResponse accountResponse = AccountResponse.builder()
+
+        AccountCreateRequest accountCreateRequest = AccountCreateRequest.builder()
                 .nickname(annotation.nickname())
                 .email(annotation.email())
-                .roles(Set.of(RoleResponse.builder()
-                        .roleName(annotation.roleName())
-                        .roleDesc(annotation.roleDesc())
-                        .build()))
+                .password(annotation.password())
                 .build();
 
-        RestUserDetails userDetails = RestUserDetails.builder()
-                .accountResponse(accountResponse)
-                .authorities(List.of(new SimpleGrantedAuthority(annotation.roleDesc())))
-                .build();
+        userDetailsService.signup(accountCreateRequest);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(annotation.email());
 
-        RestAuthenticationToken authenticationToken = new RestAuthenticationToken(userDetails.getAuthorities(), userDetails, null);
+        RestAuthenticationToken authenticationToken = new RestAuthenticationToken(userDetails.getAuthorities(), userDetails, userDetails.getPassword());
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
         securityContext.setAuthentication(authenticationToken);
 

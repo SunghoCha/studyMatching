@@ -53,17 +53,26 @@ public class AccountController {
     }
 
     @PatchMapping("/profile/{accountId}")
-    public ResponseEntity<AccountResponse> editProfile(@PathVariable(name = "accountId") Long id, @RequestBody AccountEditRequest accountEditRequest) {
-        AccountResponse response = userDetailsService.updateAccount(id, accountEditRequest);
+    public ResponseEntity<AccountResponse> editProfile(@PathVariable(name = "accountId") Long id,
+                                                       @Valid @RequestBody AccountEditRequest accountEditRequest) {
+        AccountResponse response = userDetailsService.updateAccountProfile(id, accountEditRequest);
         // TODO AccountResponse 필드값 수정 필요
 
         return ResponseEntity.ok().body(response);
     }
 
     @PatchMapping("/password/{accountId}")
-    public ResponseEntity<AccountResponse> editPassword(@PathVariable(name = "accountId") Long id, @Valid @RequestBody PasswordEditRequest passwordEditRequest) {
+    public ResponseEntity<AccountResponse> editPassword(@PathVariable(name = "accountId") Long id,
+                                                        @Valid @RequestBody PasswordEditRequest passwordEditRequest) {
         AccountResponse response = userDetailsService.updateAccountPassword(id, passwordEditRequest);
-        // TODO AccountResponse 필드값 수정 필요
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PatchMapping("/notification/{accountId}")
+    public ResponseEntity<AccountResponse> editNotification(@PathVariable(name = "accountId") Long id,
+                                                            @RequestBody NotificationEditRequest notificationEditRequest) {
+        AccountResponse response = userDetailsService.updateAccountNotification(id, notificationEditRequest);
 
         return ResponseEntity.ok().body(response);
     }

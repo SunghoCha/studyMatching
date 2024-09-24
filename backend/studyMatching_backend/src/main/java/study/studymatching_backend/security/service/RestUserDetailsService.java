@@ -10,18 +10,18 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import study.studymatching_backend.account.dto.AccountCreateRequest;
-import study.studymatching_backend.account.dto.AccountEditRequest;
-import study.studymatching_backend.account.dto.AccountResponse;
-import study.studymatching_backend.account.dto.PasswordEditRequest;
+import study.studymatching_backend.account.dto.*;
 import study.studymatching_backend.account.repository.AccountRepository;
 import study.studymatching_backend.domain.Account;
+import study.studymatching_backend.domain.Role;
 import study.studymatching_backend.exception.AlreadyExistsEmailException;
 import study.studymatching_backend.exception.EmailNotFoundException;
 import study.studymatching_backend.exception.InvalidTokenException;
+import study.studymatching_backend.exception.RoleNotFoundException;
 import study.studymatching_backend.exception.dto.AccountNotFoundException;
 import study.studymatching_backend.infra.mail.EmailService;
 import study.studymatching_backend.security.details.RestUserDetails;
+import study.studymatching_backend.security.repository.RoleRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,6 +35,7 @@ public class RestUserDetailsService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final JavaMailSender javaMailSender;
     private final EmailService emailService;
+    private final RoleRepository roleRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -50,22 +51,22 @@ public class RestUserDetailsService implements UserDetailsService {
                 .build();
     }
 
-    @Transactional(readOnly = true)
-    public boolean alreadyExistsEmail(AccountCreateRequest accountCreateRequest) {
-        return accountRepository.existsByEmail(accountCreateRequest.getEmail());
-    }
-
-    @Transactional(readOnly = true)
-    public boolean alreadyExistsNickname(AccountCreateRequest accountCreateRequest) {
-        return accountRepository.existsByNickname(accountCreateRequest.getNickname());
+    private Account getByEmail(String email) {
+        return accountRepository.findByEmail(email).orElseThrow(EmailNotFoundException::new);
     }
 
     public Long signup(AccountCreateRequest accountCreateRequest) {
         Account newAccount = saveAccountWithEncodedPassword(accountCreateRequest);
+        setDefaultAccountRole(newAccount);
         newAccount.generateEmailCheckToken();
         sendEmailCheckToken(newAccount);
 
         return newAccount.getId();
+    }
+
+    private void setDefaultAccountRole(Account newAccount) {
+        Role role = roleRepository.findByRoleName("ROLE_USER").orElseThrow(RoleNotFoundException::new);
+        newAccount.addAccountRole(role);
     }
 
     private Account saveAccountWithEncodedPassword(AccountCreateRequest accountCreateRequest) {
@@ -82,12 +83,6 @@ public class RestUserDetailsService implements UserDetailsService {
         mailMessage.setText("/check-email-token?token=" + newAccount.getEmailCheckToken() + "&email=" + newAccount.getEmail());
         javaMailSender.send(mailMessage);
     }
-
-    @Transactional(readOnly = true)
-    public int getTotalCount() {
-        return (int) accountRepository.count();
-    }
-
     public Account completeRegistration(String email, String token) {
         Account account = getByEmail(email);
         if (!account.hasSameToken(token)) {
@@ -97,14 +92,10 @@ public class RestUserDetailsService implements UserDetailsService {
         return account;
     }
 
-    private Account getByEmail(String email) {
-        return accountRepository.findByEmail(email).orElseThrow(EmailNotFoundException::new);
-    }
-
     public void sendSignUpConfirmEmail(String email) {
         boolean alreadyExistsEmail = alreadyExistsEmail(AccountCreateRequest.builder().email(email).build());
         if (alreadyExistsEmail) {
-            throw new AlreadyExistsEmailException(); 
+            throw new AlreadyExistsEmailException();
         }
         // 이메일 전송 로직
     }
@@ -113,12 +104,11 @@ public class RestUserDetailsService implements UserDetailsService {
     // 엔티티가 dto에 의존? 의존하지 않으면 일일히 필드값 전달? 그렇다고 일일이 필드값 여러 개 전달하면 더 비효율적 -> 범용적인 dto or 클래스에 의존하도록 하자
     // 엔티티의 전체 필드 중 일부 필드만 수정된 결과를 선택적으로 반영하고 싶음
     // 조건문으로 null이나 빈 값이 아닐 때만 반영.
-    public AccountResponse updateAccount(Long id, AccountEditRequest accountEditRequest) {
+    public AccountResponse updateAccountProfile(Long id, AccountEditRequest accountEditRequest) {
         Account account = accountRepository.findById(id).orElseThrow(AccountNotFoundException::new);
-        account.update(accountEditRequest); // 엔티티가 특정dto에 대해서 알게 되지만 이게 최선인듯. dto를 좀 더 수정에 특화된 형태의 클래스로 변경가능할수도
+        account.updateProfile(accountEditRequest); // 엔티티가 특정dto에 대해서 알게 되지만 이게 최선인듯. dto를 좀 더 수정에 특화된 형태의 클래스로 변경가능할수도
 
         return AccountResponse.of(account);
-
     }
 
     public AccountResponse updateAccountPassword(Long id, PasswordEditRequest passwordEditRequest) {
@@ -128,4 +118,26 @@ public class RestUserDetailsService implements UserDetailsService {
 
         return AccountResponse.of(account);
     }
+
+    public AccountResponse updateAccountNotification(Long id, NotificationEditRequest notificationEditRequest) {
+        Account account = accountRepository.findById(id).orElseThrow(AccountNotFoundException::new);
+        account.updateNotification(notificationEditRequest);
+        return AccountResponse.of(account);
+    }
+
+    @Transactional(readOnly = true)
+    public int getTotalCount() {
+        return (int) accountRepository.count();
+    }
+
+    @Transactional(readOnly = true)
+    public boolean alreadyExistsEmail(AccountCreateRequest accountCreateRequest) {
+        return accountRepository.existsByEmail(accountCreateRequest.getEmail());
+    }
+
+    @Transactional(readOnly = true)
+    public boolean alreadyExistsNickname(AccountCreateRequest accountCreateRequest) {
+        return accountRepository.existsByNickname(accountCreateRequest.getNickname());
+    }
+
 }

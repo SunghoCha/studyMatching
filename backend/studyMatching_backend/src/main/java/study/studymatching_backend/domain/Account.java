@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import study.studymatching_backend.account.dto.AccountEditRequest;
+import study.studymatching_backend.account.dto.NotificationEditRequest;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
@@ -35,60 +36,31 @@ public class Account {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private Set<AccountRole> accountRoles = new LinkedHashSet<>();
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "notification_id")
+    private Notification notification;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "profile_id")
+    private Profile profile;
+
     private boolean emailVerified;
 
     private String emailCheckToken;
 
     private LocalDateTime joinedAt;
 
-    private String bio;
-
-    private String url;
-
-    private String occupation;
-
-    private String location;
-
-    @Lob
-    @Basic(fetch = FetchType.EAGER)
-    private String profileImage;
-
-    private boolean studyCreatedByEmail;
-
-    private boolean studyCreatedByWeb;
-
-    private boolean studyEnrollmentResultByEmail;
-
-    private boolean studyEnrollmentResultByWeb;
-
-    private boolean studyUpdatedByEmail;
-
-    private boolean studyUpdatedByWeb;
-
-    @Builder(toBuilder = true)
-    public Account(String email, String nickname, String password, boolean emailVerified,
-                   String emailCheckToken, LocalDateTime joinedAt, String bio, String url,
-                   String occupation, String location, String profileImage, boolean studyCreatedByEmail,
-                   boolean studyCreatedByWeb, boolean studyEnrollmentResultByEmail, boolean studyEnrollmentResultByWeb,
-                   boolean studyUpdatedByEmail, boolean studyUpdatedByWeb) {
-
+    @Builder
+    public Account(String email, String nickname, String password, Notification notification,
+                   Profile profile, boolean emailVerified, String emailCheckToken, LocalDateTime joinedAt) {
         this.email = email;
         this.nickname = nickname;
         this.password = password;
+        this.notification = notification != null ? notification : new Notification();
+        this.profile = profile != null ? profile : new Profile();
         this.emailVerified = emailVerified;
         this.emailCheckToken = emailCheckToken;
         this.joinedAt = joinedAt;
-        this.bio = bio;
-        this.url = url;
-        this.occupation = occupation;
-        this.location = location;
-        this.profileImage = profileImage;
-        this.studyCreatedByEmail = studyCreatedByEmail;
-        this.studyCreatedByWeb = studyCreatedByWeb;
-        this.studyEnrollmentResultByEmail = studyEnrollmentResultByEmail;
-        this.studyEnrollmentResultByWeb = studyEnrollmentResultByWeb;
-        this.studyUpdatedByEmail = studyUpdatedByEmail;
-        this.studyUpdatedByWeb = studyUpdatedByWeb;
     }
 
     public void generateEmailCheckToken() {
@@ -110,22 +82,25 @@ public class Account {
                 .collect(Collectors.toList());
     }
 
-    public void update(AccountEditRequest accountEditRequest) {
-        if (accountEditRequest.getBio() != null && !accountEditRequest.getBio().isBlank()) {
-            this.bio = accountEditRequest.getBio();
+    public void updateProfile(AccountEditRequest accountEditRequest) {
+        if (this.profile == null) {
+            this.profile = new Profile();
         }
-        if (accountEditRequest.getUrl() != null && !accountEditRequest.getUrl().isBlank()) {
-            this.url = accountEditRequest.getUrl();
-        }
-        if (accountEditRequest.getOccupation() != null && !accountEditRequest.getOccupation().isBlank()) {
-            this.occupation = accountEditRequest.getOccupation();
-        }
-        if (accountEditRequest.getLocation() != null && !accountEditRequest.getLocation().isBlank()) {
-            this.location = accountEditRequest.getLocation();
-        }
+        this.profile.updateProfile(accountEditRequest);
     }
 
     public void updatePassword(String encodedPassword) {
         this.password = encodedPassword;
+    }
+
+    public void addAccountRole(Role role) {
+        this.accountRoles.add(AccountRole.createAccountRole(this, role));
+    }
+
+    public void updateNotification(NotificationEditRequest notificationEditRequest) {
+        if (this.notification == null) {
+            this.notification = new Notification();
+        }
+        this.notification.updateNotification(notificationEditRequest);
     }
 }

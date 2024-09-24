@@ -3,15 +3,23 @@ package study.studymatching_backend.account.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 import study.studymatching_backend.domain.Account;
 
 @Getter
 @Setter
 public class AccountEditRequest {
 
+    @Length(max = 50)
     private String bio;
+
+    @Length(max = 50)
     private String url;
+
+    @Length(max = 50)
     private String occupation;
+
+    @Length(max = 50)
     private String location;
 
     @Builder

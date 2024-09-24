@@ -37,9 +37,6 @@ public class AccountCreateRequest {
                 .email(email)
                 .nickname(nickname)
                 .password(encodedPassword)
-                .studyCreatedByWeb(true)
-                .studyEnrollmentResultByWeb(true)
-                .studyUpdatedByWeb(true)
                 .build();
     }
 }

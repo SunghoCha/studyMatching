@@ -1,19 +1,17 @@
 package study.studymatching_backend.account.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Getter;
-import org.hibernate.validator.constraints.Length;
+import lombok.ToString;
 import study.studymatching_backend.domain.Account;
+import study.studymatching_backend.dto.ProfileResponse;
 import study.studymatching_backend.dto.RoleResponse;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Getter
+@Getter @ToString
 public class AccountResponse {
 
     private Long id;
@@ -22,14 +20,19 @@ public class AccountResponse {
     @JsonIgnore
     private String password;
     private Set<RoleResponse> roles;
+    private ProfileResponse profileResponse;
+    private NotificationResponse notificationResponse;
 
     @Builder
-    private AccountResponse(Long id, String nickname, String email, String password, Set<RoleResponse> roles) {
+    private AccountResponse(Long id, String nickname, String email, String password, Set<RoleResponse> roles,
+                            ProfileResponse profileResponse, NotificationResponse notificationResponse) {
         this.id = id;
         this.nickname = nickname;
         this.email = email;
         this.password = password;
         this.roles = roles;
+        this.profileResponse = profileResponse;
+        this.notificationResponse = notificationResponse;
     }
 
     public static AccountResponse of(Account account) {
@@ -41,7 +44,8 @@ public class AccountResponse {
                 .roles(account.getAccountRoles().stream()
                         .map(RoleResponse::of)
                         .collect(Collectors.toSet()))
+                .profileResponse(ProfileResponse.of(account.getProfile()))
+                .notificationResponse(NotificationResponse.of(account.getNotification()))
                 .build();
     }
-
 }

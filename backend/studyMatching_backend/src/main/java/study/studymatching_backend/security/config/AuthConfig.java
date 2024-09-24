@@ -21,6 +21,4 @@ public class AuthConfig {
 
         return RoleHierarchyImpl.fromHierarchy(allHierarchy);
     }
-
-
 }

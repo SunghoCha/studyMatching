@@ -15,8 +15,8 @@ export default {
 
         if (!response.ok) {
             console.log(responseData);
-            const error = new Error(responseData.message || 'Failed to authenticate. Check your login data.');
-            throw error;
+            throw new Error(responseData.message || 'Failed to authenticate. Check your login data.');
+
         }
 
         console.log(responseData);
@@ -43,8 +43,8 @@ export default {
 
         if (!response.ok) {
             console.log(responseData);
-            const error = new Error(responseData.message || 'Failed to registeration. Check your sign-up data.');
-            throw error;
+            throw new Error(responseData.message || 'Failed to registeration. Check your sign-up data.');
+
         }
 
         // 사용자 정보를 Vuex 스토어에 커밋
@@ -55,6 +55,7 @@ export default {
             userId: responseData,
         });
     },
+
     async checkNickname(context, payload) {
         const response = await fetch('http://localhost:8080/check-nickname', {
             method: 'POST',
@@ -79,4 +80,48 @@ export default {
             isValidNickname: responseData,
         });
     },
+
+    async editProfile(context, payload) {
+        const accountId = payload.accountId;
+        const response = await fetch(`http://localhost:8080/profile/${accountId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                bio: payload.bio,
+                url: payload.url,
+                occupation: payload.occupation,
+                location: payload.location
+            })
+        });
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+            throw new Error(responseData.message || "프로필 변경에 실패하였습니다.")
+        }
+
+        //TODO AccountResponse 받아서 계정 정보 업데이트
+    },
+
+    async editPassword(context, payload) {
+        const accountId = payload.accountId;
+        const response = await fetch(`http://localhost:8080/password/${accountId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                newPassword: payload.newPassword,
+                newPasswordConfirm: payload.newPasswordConfirm
+            })
+        });
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+            throw new Error(responseData.message || '비밀번호 변경에 실패하였습니다.');
+        }
+    }
 }

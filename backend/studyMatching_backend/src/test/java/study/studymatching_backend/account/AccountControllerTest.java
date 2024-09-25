@@ -321,7 +321,7 @@ class AccountControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.notificationResponse.studyCreatedByEmail").isBoolean())
                 .andDo(MockMvcResultHandlers.print());
 
         // then

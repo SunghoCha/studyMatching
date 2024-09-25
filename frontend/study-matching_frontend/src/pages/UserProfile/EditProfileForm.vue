@@ -1,50 +1,3 @@
-<script>
-import TheCard from "@/components/cards/TheCard.vue";
-import BaseInput from "@/components/inputs/BaseInput.vue";
-
-export default {
-  name: "TheEditProfileForm",
-  components: {BaseInput, TheCard},
-  data() {
-    return {
-      user: {
-        company: 'Light dashboard',
-        username: 'michael23',
-        email: 'example@gmail.com',
-        firstName: 'Mike',
-        lastName: 'Andrew',
-        address: 'Melbourne, Australia',
-        city: 'melbourne',
-        country: 'Australia',
-        postalCode: '',
-        aboutMe: `Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo.`
-      }
-    }
-  },
-  watch: {
-    'user.username'(newValue) {
-      console.log('EditProfileForm - Username updated in parent:', newValue);
-    }
-  },
-  created() {
-    console.log('parent component created');
-  },
-  mounted() {
-    console.log('parent component mounted');
-  },
-  methods: {
-    onChangeUserName(val) {
-      this.user.username = val;
-      console.log("EditProfileForm - username changed")
-    },
-    onChangeEmail(val) {
-      this.user.username = val;
-      console.log("EditProfileForm - email changed")
-    }
-  },
-}
-</script>
-
 <template>
   <TheCard>
     <template v-slot:header>
@@ -83,6 +36,7 @@ export default {
           <base-input type="text"
                       label="First Name"
                       placeholder="First Name"
+                      :value="user.firstName"
                       v-model="user.firstName">
           </base-input>
         </div>
@@ -145,10 +99,56 @@ export default {
           Update Profile
         </button>
       </div>
-      <div class="clearfix"></div>
     </form>
   </TheCard>
 </template>
+
+<script>
+import TheCard from "@/components/cards/TheCard.vue";
+import BaseInput from "@/components/inputs/BaseInput.vue";
+
+export default {
+  name: "EditProfileForm",
+  components: {BaseInput, TheCard},
+  data() {
+    return {
+      user: {
+        company: 'Light dashboard',
+        username: 'michael23',
+        email: 'example@gmail.com',
+        firstName: 'Mike',
+        lastName: 'Andrew',
+        address: 'Melbourne, Australia',
+        city: 'melbourne',
+        country: 'Australia',
+        postalCode: '',
+        aboutMe: `Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo.`
+      },
+    }
+  },
+  watch: {
+    'user.username'(newValue) {
+      console.log('EditProfileForm - Username updated in parent:', newValue);
+    }
+  },
+  created() {
+    console.log('parent component created');
+  },
+  mounted() {
+    console.log('parent component mounted');
+  },
+  methods: {
+    onChangeUserName(val) {
+      this.user.username = val;
+      console.log("EditProfileForm - username changed")
+    },
+    onChangeEmail(val) {
+      this.user.username = val;
+      console.log("EditProfileForm - email changed")
+    }
+  },
+}
+</script>
 
 <style scoped>
 

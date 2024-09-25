@@ -76,5 +76,11 @@ public class AccountController {
 
         return ResponseEntity.ok().body(response);
     }
+
+    @PatchMapping("/tag/{accountId}")
+    public ResponseEntity<AccountResponse> editTag(@PathVariable(name = "accountId") Long id,
+                                                   @RequestBody TagEditRequest tagEditRequest) {
+        userDetailsService.updateAccountTag(id, tagEditRequest);
+    }
 }
 

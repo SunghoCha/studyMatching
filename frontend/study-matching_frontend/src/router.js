@@ -4,6 +4,7 @@ import TheLogin from "@/pages/TheLogin.vue";
 import TheSignUp from "@/pages/TheSignUp.vue";
 import TheEmailCheck from "@/pages/TheEmailCheck.vue";
 import UserProfile from "@/pages/UserProfile.vue";
+import EditPasswordForm from "@/pages/UserProfile/EditPasswordForm.vue";
 
 
 const router =  createRouter({
@@ -14,7 +15,8 @@ const router =  createRouter({
         { path: '/login', component: TheLogin },
         { path: '/signup', component: TheSignUp },
         { path: '/email-check', component: TheEmailCheck},
-        { path: '/profile', component: UserProfile}
+        { path: '/profile', component: UserProfile},
+        { path: '/password', component: EditPasswordForm}
     ]
 });
 

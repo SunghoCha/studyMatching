@@ -20,7 +20,7 @@
       <input
           :value="value"
           v-bind="$attrs"
-          @input="onInput"
+          @change="onChanged"
           @focus="onFocus"
           @blur="onBlur"
           class="form-control"
@@ -67,6 +67,7 @@ export default {
   },
   data() {
     return {
+      localValue: this.value,
       focused: false
     }
   },
@@ -89,7 +90,7 @@ export default {
     console.log('Initial prop value:', this.value);
   },
   methods: {
-    onInput(evt) {
+    onChanged(evt) {
       const value = evt.target.value;
       console.log('BaseInput - onInput:', value);
       this.$emit('input', value); // input 이벤트 발생시 새로운 값을 emit

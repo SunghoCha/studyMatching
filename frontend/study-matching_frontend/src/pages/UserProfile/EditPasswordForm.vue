@@ -1,29 +1,55 @@
+<template>
+  <TheCard>
+    <template v-slot:header>
+      <h4 class="card-title">Edit Profile</h4>
+    </template>
+    <form>
+      <div class="d-flex flex-column">
+        <div class="col-md-4 mt-3">
+          <base-input type="password"
+                      label="새 패스워드"
+                      placeholder="새 패스워드"
+                      min="4"
+                      max="20"
+                      v-model="newPassword"
+          >
+          </base-input>
+        </div>
+        <div class="col-md-4 mt-3">
+          <base-input type="password"
+                      label="새 패스워드 확인"
+                      placeholder="새 패스워드 확인"
+                      min="4"
+                      max="20"
+                      v-model="confirmPassword"
+          >
+          </base-input>
+        </div>
+        <div class="col-md-4 mt-3">
+          <div class="text-center mt-3">
+            <button type="submit" class="btn btn-info btn-fill"
+            @click.prevent="updatePassword">
+            Update Profile
+          </button>
+          </div>
+        </div>
+      </div>
+  </form>
+</TheCard>
+</template>
+
 <script>
-import TheCard from "@/components/cards/TheCard.vue";
-import BaseInput from "@/components/inputs/BaseInput.vue";
+  import TheCard from "@/components/cards/TheCard.vue";
+  import BaseInput from "@/components/inputs/BaseInput.vue";
 
 export default {
   name: "TheEditProfileForm",
   components: {BaseInput, TheCard},
   data() {
     return {
-      user: {
-        company: 'Light dashboard',
-        username: 'michael23',
-        email: 'example@gmail.com',
-        firstName: 'Mike',
-        lastName: 'Andrew',
-        address: 'Melbourne, Australia',
-        city: 'melbourne',
-        country: 'Australia',
-        postalCode: '',
-        aboutMe: `Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo.`
-      }
-    }
-  },
-  watch: {
-    'user.username'(newValue) {
-      console.log('EditProfileForm - Username updated in parent:', newValue);
+      newPassword: '',
+      newPasswordConfirm: '',
+      error: null,
     }
   },
   created() {
@@ -33,122 +59,25 @@ export default {
     console.log('parent component mounted');
   },
   methods: {
-    onChangeUserName(val) {
-      this.user.username = val;
-      console.log("EditProfileForm - username changed")
-    },
-    onChangeEmail(val) {
-      this.user.username = val;
-      console.log("EditProfileForm - email changed")
+    async updatePassword() {
+      if (this.newPassword !== this.newPasswordConfirm) {
+        alert("비밀번호가 일치하지 않습니다.");
+        return;
+      }
+      const formData = {
+        newPassword: this.newPassword,
+        newPasswordConfirm: this.newPasswordConfirm
+      };
+      try {
+        await this.$store.dispatch('auth/editPassword', formData)
+        this.$router.replace('/profile')
+      } catch (err) {
+        this.error = err.message || "비밀번호 변경에 실패하였습니다."
+      }
     }
   },
 }
 </script>
-
-<template>
-  <TheCard>
-    <template v-slot:header>
-      <h4 class="card-title">Edit Profile</h4>
-    </template>
-    <form>
-      <div class="row">
-        <div class="col-md-5">
-          <base-input type="text"
-                      label="Company"
-                      :disabled="true"
-                      placeholder="Light dashboard"
-                      v-model="user.company">
-          </base-input>
-        </div>
-        <div class="col-md-3">
-          <base-input type="text"
-                      label="Username"
-                      placeholder="Username"
-                      :value="user.username"
-                      @input="onChangeUserName">
-          </base-input>
-        </div>
-        <div class="col-md-4">
-          <base-input type="email"
-                      label="Email"
-                      placeholder="Email"
-                      :value="user.email"
-                      @input="onChangeEmail">
-          </base-input>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-6">
-          <base-input type="text"
-                      label="First Name"
-                      placeholder="First Name"
-                      v-model="user.firstName">
-          </base-input>
-        </div>
-        <div class="col-md-6">
-          <base-input type="text"
-                      label="Last Name"
-                      placeholder="Last Name"
-                      v-model="user.lastName">
-          </base-input>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-12">
-          <base-input type="text"
-                      label="Address"
-                      placeholder="Home Address"
-                      v-model="user.address">
-          </base-input>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-4">
-          <base-input type="text"
-                      label="City"
-                      placeholder="City"
-                      v-model="user.city">
-          </base-input>
-        </div>
-        <div class="col-md-4">
-          <base-input type="text"
-                      label="Country"
-                      placeholder="Country"
-                      v-model="user.country">
-          </base-input>
-        </div>
-        <div class="col-md-4">
-          <base-input type="number"
-                      label="Postal Code"
-                      placeholder="ZIP Code"
-                      v-model="user.postalCode">
-          </base-input>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-12">
-          <div class="form-group">
-            <label>About Me</label>
-            <textarea rows="5" class="form-control border-input"
-                      placeholder="Here can be your description"
-                      v-model="user.aboutMe">
-              </textarea>
-          </div>
-        </div>
-      </div>
-      <div class="text-center">
-        <button type="submit" class="btn btn-info btn-fill float-right" @click.prevent="updateProfile">
-          Update Profile
-        </button>
-      </div>
-      <div class="clearfix"></div>
-    </form>
-  </TheCard>
-</template>
 
 <style scoped>
 

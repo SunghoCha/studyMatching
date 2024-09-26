@@ -32,21 +32,8 @@
       </div>
 
       <div class="row">
-        <div class="col-md-6">
-          <base-input type="text"
-                      label="First Name"
-                      placeholder="First Name"
-                      :value="user.firstName"
-                      v-model="user.firstName">
-          </base-input>
-        </div>
-        <div class="col-md-6">
-          <base-input type="text"
-                      label="Last Name"
-                      placeholder="Last Name"
-                      v-model="user.lastName">
-          </base-input>
-        </div>
+
+
       </div>
 
       <div class="row">
@@ -143,7 +130,7 @@ export default {
       console.log("EditProfileForm - username changed")
     },
     onChangeEmail(val) {
-      this.user.username = val;
+      this.user.email = val;
       console.log("EditProfileForm - email changed")
     }
   },

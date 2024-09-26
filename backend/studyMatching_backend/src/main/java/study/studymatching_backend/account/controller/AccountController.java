@@ -54,8 +54,8 @@ public class AccountController {
 
     @PatchMapping("/profile/{accountId}")
     public ResponseEntity<AccountResponse> editProfile(@PathVariable(name = "accountId") Long id,
-                                                       @Valid @RequestBody AccountEditRequest accountEditRequest) {
-        AccountResponse response = userDetailsService.updateAccountProfile(id, accountEditRequest);
+                                                       @Valid @RequestBody ProfileEditRequest profileEditRequest) {
+        AccountResponse response = userDetailsService.updateAccountProfile(id, profileEditRequest);
         // TODO AccountResponse 필드값 수정 필요
 
         return ResponseEntity.ok().body(response);

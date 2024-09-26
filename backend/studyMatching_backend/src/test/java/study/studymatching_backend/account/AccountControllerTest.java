@@ -1,7 +1,6 @@
 package study.studymatching_backend.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.With;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -201,14 +200,14 @@ class AccountControllerTest {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RestUserDetails principal = (RestUserDetails) authentication.getPrincipal();
 
-        AccountEditRequest accountEditRequest = AccountEditRequest.builder()
+        ProfileEditRequest profileEditRequest = ProfileEditRequest.builder()
                 .bio("bio입니다.")
                 .url("www.test.com")
                 .occupation("occupation입니다.")
                 .location("location입니다.")
                 .build();
 
-        String json = objectMapper.writeValueAsString(accountEditRequest);
+        String json = objectMapper.writeValueAsString(profileEditRequest);
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.patch("/profile/{accountId}", principal.getAccountResponse().getId())
@@ -230,14 +229,14 @@ class AccountControllerTest {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RestUserDetails principal = (RestUserDetails) authentication.getPrincipal();
 
-        AccountEditRequest accountEditRequest = AccountEditRequest.builder()
+        ProfileEditRequest profileEditRequest = ProfileEditRequest.builder()
                 .bio("50글자를초과하는입력12345678910123456789101234567891012345678910123456789101234567891012345678910123456789101234567891012345678910.")
                 .url("www.test.com")
                 .occupation("occupation입니다.")
                 .location("location입니다")
                 .build();
 
-        String json = objectMapper.writeValueAsString(accountEditRequest);
+        String json = objectMapper.writeValueAsString(profileEditRequest);
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.patch("/profile/{accountId}", principal.getAccountResponse().getId())

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import study.studymatching_backend.account.dto.AccountEditRequest;
+import study.studymatching_backend.account.dto.ProfileEditRequest;
 
 @Entity
 @Getter
@@ -29,18 +29,18 @@ public class Profile {
 
     private String profileImage;
 
-    public void updateProfile(AccountEditRequest accountEditRequest) {
-        if (accountEditRequest.getBio() != null && !accountEditRequest.getBio().isBlank()) {
-            this.bio = accountEditRequest.getBio();
+    public void updateProfile(ProfileEditRequest profileEditRequest) {
+        if (profileEditRequest.getBio() != null && !profileEditRequest.getBio().isBlank()) {
+            this.bio = profileEditRequest.getBio();
         }
-        if (accountEditRequest.getUrl() != null && !accountEditRequest.getUrl().isBlank()) {
-            this.url = accountEditRequest.getUrl();
+        if (profileEditRequest.getUrl() != null && !profileEditRequest.getUrl().isBlank()) {
+            this.url = profileEditRequest.getUrl();
         }
-        if (accountEditRequest.getOccupation() != null && !accountEditRequest.getOccupation().isBlank()) {
-            this.occupation = accountEditRequest.getOccupation();
+        if (profileEditRequest.getOccupation() != null && !profileEditRequest.getOccupation().isBlank()) {
+            this.occupation = profileEditRequest.getOccupation();
         }
-        if (accountEditRequest.getLocation() != null && !accountEditRequest.getLocation().isBlank()) {
-            this.location = accountEditRequest.getLocation();
+        if (profileEditRequest.getLocation() != null && !profileEditRequest.getLocation().isBlank()) {
+            this.location = profileEditRequest.getLocation();
         }
     }
 }

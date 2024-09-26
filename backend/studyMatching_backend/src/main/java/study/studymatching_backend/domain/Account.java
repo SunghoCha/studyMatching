@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import study.studymatching_backend.account.dto.AccountEditRequest;
+import study.studymatching_backend.account.dto.ProfileEditRequest;
 import study.studymatching_backend.account.dto.NotificationEditRequest;
 
 import java.time.LocalDateTime;
@@ -86,11 +86,11 @@ public class Account {
                 .collect(Collectors.toList());
     }
 
-    public void updateProfile(AccountEditRequest accountEditRequest) {
+    public void updateProfile(ProfileEditRequest profileEditRequest) {
         if (this.profile == null) {
             this.profile = new Profile();
         }
-        this.profile.updateProfile(accountEditRequest);
+        this.profile.updateProfile(profileEditRequest);
     }
 
     public void updatePassword(String encodedPassword) {

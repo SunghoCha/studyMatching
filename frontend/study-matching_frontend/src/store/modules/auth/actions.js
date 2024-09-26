@@ -16,7 +16,6 @@ export default {
         if (!response.ok) {
             console.log(responseData);
             throw new Error(responseData.message || 'Failed to authenticate. Check your login data.');
-
         }
 
         console.log(responseData);
@@ -84,7 +83,7 @@ export default {
     async editProfile(context, payload) {
         const accountId = payload.accountId;
         const response = await fetch(`http://localhost:8080/profile/${accountId}`, {
-            method: 'POST',
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -108,7 +107,7 @@ export default {
     async editPassword(context, payload) {
         const accountId = payload.accountId;
         const response = await fetch(`http://localhost:8080/password/${accountId}`, {
-            method: 'POST',
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -123,5 +122,24 @@ export default {
         if (!response.ok) {
             throw new Error(responseData.message || '비밀번호 변경에 실패하였습니다.');
         }
-    }
+    },
+
+    async editTag(context, payload) {
+        const accountId = payload.accountId;
+        const response = await fetch(`http://localhost:8080/tag/${accountId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tags : payload.tags
+            })
+        });
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+            throw new Error(responseData.message || 'tag 등록에 실패하였습니다.')
+        }
+    },
 }

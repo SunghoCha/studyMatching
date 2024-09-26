@@ -4,11 +4,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
-import study.studymatching_backend.domain.Account;
 
 @Getter
 @Setter
-public class AccountEditRequest {
+public class ProfileEditRequest {
 
     @Length(max = 50)
     private String bio;
@@ -23,7 +22,7 @@ public class AccountEditRequest {
     private String location;
 
     @Builder
-    public AccountEditRequest(String bio, String url, String occupation, String location) {
+    public ProfileEditRequest(String bio, String url, String occupation, String location) {
         this.bio = bio;
         this.url = url;
         this.occupation = occupation;

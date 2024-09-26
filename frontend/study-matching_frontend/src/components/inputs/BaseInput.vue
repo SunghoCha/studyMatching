@@ -40,7 +40,7 @@
 
 <script>
 export default {
-  inheritAttrs: false, // 컴포넌트의 최상위 DOM 요소가 아닌 특정 하위 DOM 요소에 속성 전달하기 위한 설정
+  //inheritAttrs: false, // 컴포넌트의 최상위 DOM 요소가 아닌 특정 하위 DOM 요소에 속성 전달하기 위한 설정
   name: "base-input",
   props: {
     label: {
@@ -67,7 +67,6 @@ export default {
   },
   data() {
     return {
-      localValue: this.value,
       focused: false
     }
   },

@@ -12,19 +12,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import study.studymatching_backend.account.dto.*;
 import study.studymatching_backend.account.repository.AccountRepository;
+import study.studymatching_backend.account.tag.TagRepository;
 import study.studymatching_backend.domain.Account;
+import study.studymatching_backend.domain.AccountTag;
 import study.studymatching_backend.domain.Role;
-import study.studymatching_backend.exception.AlreadyExistsEmailException;
-import study.studymatching_backend.exception.EmailNotFoundException;
-import study.studymatching_backend.exception.InvalidTokenException;
-import study.studymatching_backend.exception.RoleNotFoundException;
+import study.studymatching_backend.domain.Tag;
+import study.studymatching_backend.exception.*;
 import study.studymatching_backend.exception.dto.AccountNotFoundException;
 import study.studymatching_backend.infra.mail.EmailService;
 import study.studymatching_backend.security.details.RestUserDetails;
 import study.studymatching_backend.security.repository.RoleRepository;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -36,6 +39,7 @@ public class RestUserDetailsService implements UserDetailsService {
     private final JavaMailSender javaMailSender;
     private final EmailService emailService;
     private final RoleRepository roleRepository;
+    private final TagRepository tagRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -122,6 +126,24 @@ public class RestUserDetailsService implements UserDetailsService {
     public AccountResponse updateAccountNotification(Long id, NotificationEditRequest notificationEditRequest) {
         Account account = accountRepository.findById(id).orElseThrow(AccountNotFoundException::new);
         account.updateNotification(notificationEditRequest);
+
+        return AccountResponse.of(account);
+    }
+
+    public AccountResponse updateAccountTag(Long id, TagEditRequest tagEditRequest) {
+        Account account = accountRepository.findById(id).orElseThrow(AccountNotFoundException::new);
+        Set<Tag> tags = tagRepository.findByTitleIn(tagEditRequest.getTags()); // findAll로 검색해서 containsAll하면 성능 떨어짐.
+
+        if (tags.size() != tagEditRequest.getTags().size()) {
+            throw new InvalidTagException();
+        }
+
+        Set<AccountTag> accountTags = tags.stream()
+                .map(tag -> AccountTag.createAccountTag(account, tag))
+                .collect(Collectors.toSet());
+
+        account.updateAccountTag(accountTags);
+
         return AccountResponse.of(account);
     }
 

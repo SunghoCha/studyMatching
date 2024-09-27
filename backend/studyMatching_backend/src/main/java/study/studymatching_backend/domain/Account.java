@@ -8,10 +8,7 @@ import study.studymatching_backend.account.dto.ProfileEditRequest;
 import study.studymatching_backend.account.dto.NotificationEditRequest;
 
 import java.time.LocalDateTime;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -46,7 +43,7 @@ public class Account {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "tag_id")
-    private Set<AccountTag> accountTag;
+    private Set<AccountTag> accountTags = new HashSet<>();
 
     private boolean emailVerified;
 
@@ -106,5 +103,9 @@ public class Account {
             this.notification = new Notification();
         }
         this.notification.updateNotification(notificationEditRequest);
+    }
+
+    public void updateAccountTag(Set<AccountTag> accountTags) {
+        this.accountTags.addAll(accountTags);
     }
 }

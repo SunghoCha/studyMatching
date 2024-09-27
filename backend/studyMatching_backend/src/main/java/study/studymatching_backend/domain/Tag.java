@@ -1,10 +1,7 @@
 package study.studymatching_backend.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
@@ -18,4 +15,9 @@ public class Tag {
 
     @Column(unique = true, nullable = false)
     private String title;
+
+    @Builder
+    private Tag(String title) {
+        this.title = title;
+    }
 }

@@ -28,6 +28,8 @@ import study.studymatching_backend.exception.EmailNotFoundException;
 import study.studymatching_backend.security.details.RestUserDetails;
 import study.studymatching_backend.security.service.RestUserDetailsService;
 
+import java.util.Set;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -211,8 +213,8 @@ class AccountControllerTest {
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.patch("/profile/{accountId}", principal.getAccountResponse().getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.profileResponse.bio").value("bio입니다."))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.profileResponse.url").value("www.test.com"))
@@ -321,6 +323,28 @@ class AccountControllerTest {
                         .content(json))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.notificationResponse.studyCreatedByEmail").isBoolean())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @WithAccount
+    @DisplayName("태그 수정 테스트 성공 케이스")
+    void updateTag_with_correct_input() throws Exception {
+        // given
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RestUserDetails principal = (RestUserDetails) authentication.getPrincipal();
+
+        TagEditRequest tagEditRequest = TagEditRequest.builder()
+                .tags(Set.of("Spring, Java"))
+                .build();
+
+        String json = objectMapper.writeValueAsString(tagEditRequest);
+
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.patch("/tag/{accountId}", principal.getAccountResponse().getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
 
         // then

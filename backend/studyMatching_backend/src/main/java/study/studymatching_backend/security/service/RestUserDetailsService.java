@@ -17,6 +17,7 @@ import study.studymatching_backend.domain.Account;
 import study.studymatching_backend.domain.AccountTag;
 import study.studymatching_backend.domain.Role;
 import study.studymatching_backend.domain.Tag;
+import study.studymatching_backend.dto.ApiResponse;
 import study.studymatching_backend.exception.*;
 import study.studymatching_backend.exception.dto.AccountNotFoundException;
 import study.studymatching_backend.infra.mail.EmailService;
@@ -24,7 +25,6 @@ import study.studymatching_backend.security.details.RestUserDetails;
 import study.studymatching_backend.security.repository.RoleRepository;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -130,7 +130,7 @@ public class RestUserDetailsService implements UserDetailsService {
         return AccountResponse.of(account);
     }
 
-    public AccountResponse updateAccountTag(Long id, TagEditRequest tagEditRequest) {
+    public AccountResponse addAccountTag(Long id, TagEditRequest tagEditRequest) {
         Account account = accountRepository.findById(id).orElseThrow(AccountNotFoundException::new);
         Set<Tag> tags = tagRepository.findByTitleIn(tagEditRequest.getTags()); // findAll로 검색해서 containsAll하면 성능 떨어짐.
 
@@ -142,9 +142,25 @@ public class RestUserDetailsService implements UserDetailsService {
                 .map(tag -> AccountTag.createAccountTag(account, tag))
                 .collect(Collectors.toSet());
 
-        account.updateAccountTag(accountTags);
+        account.addAccountTag(accountTags);
 
         return AccountResponse.of(account);
+    }
+
+    public boolean removeAccountTag(Long id, TagEditRequest tagEditRequest) {
+        Account account = accountRepository.findById(id).orElseThrow(AccountNotFoundException::new);
+        if (account.getAccountTags().isEmpty()) {
+            throw new InvalidTagException();
+        }
+        Set<Tag> tags = tagRepository.findByTitleIn(tagEditRequest.getTags());
+        if (tags.isEmpty()) {
+            throw new InvalidTagException();
+        }
+        Set<AccountTag> accountTags = tags.stream()
+                .map(tag -> AccountTag.createAccountTag(account, tag))
+                .collect(Collectors.toSet());
+
+        return account.getAccountTags().removeAll(accountTags);
     }
 
     @Transactional(readOnly = true)

@@ -17,11 +17,7 @@ public class TagEditRequest {
     private Set<String> tags;
 
     @Builder
-    private TagEditRequest(Set<String> tags) {
+    public TagEditRequest(Set<String> tags) {
         this.tags = tags;
-    }
-
-    public Set<Tag> toEntity() {
-        return tags.stream().map(tag -> Tag.builder().title(tag).build()).collect(Collectors.toSet());
     }
 }

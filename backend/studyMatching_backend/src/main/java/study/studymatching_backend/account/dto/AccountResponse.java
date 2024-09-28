@@ -22,10 +22,11 @@ public class AccountResponse {
     private Set<RoleResponse> roles;
     private ProfileResponse profileResponse;
     private NotificationResponse notificationResponse;
+    private TagResponse tagResponse;
 
     @Builder
     private AccountResponse(Long id, String nickname, String email, String password, Set<RoleResponse> roles,
-                            ProfileResponse profileResponse, NotificationResponse notificationResponse) {
+                            ProfileResponse profileResponse, NotificationResponse notificationResponse, TagResponse tagResponse) {
         this.id = id;
         this.nickname = nickname;
         this.email = email;
@@ -33,6 +34,7 @@ public class AccountResponse {
         this.roles = roles;
         this.profileResponse = profileResponse;
         this.notificationResponse = notificationResponse;
+        this.tagResponse = tagResponse;
     }
 
     public static AccountResponse of(Account account) {
@@ -46,6 +48,7 @@ public class AccountResponse {
                         .collect(Collectors.toSet()))
                 .profileResponse(ProfileResponse.of(account.getProfile()))
                 .notificationResponse(NotificationResponse.of(account.getNotification()))
+                .tagResponse(TagResponse.of(account.getAccountTags()))
                 .build();
     }
 }

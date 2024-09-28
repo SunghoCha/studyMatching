@@ -1,6 +1,7 @@
 package study.studymatching_backend.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,10 @@ import study.studymatching_backend.WithAccount;
 import study.studymatching_backend.account.dto.*;
 import study.studymatching_backend.account.repository.AccountRepository;
 import study.studymatching_backend.domain.Account;
+import study.studymatching_backend.domain.AccountTag;
+import study.studymatching_backend.domain.Tag;
 import study.studymatching_backend.exception.EmailNotFoundException;
+import study.studymatching_backend.exception.dto.AccountNotFoundException;
 import study.studymatching_backend.security.details.RestUserDetails;
 import study.studymatching_backend.security.service.RestUserDetailsService;
 
@@ -335,7 +339,7 @@ class AccountControllerTest {
         RestUserDetails principal = (RestUserDetails) authentication.getPrincipal();
 
         TagEditRequest tagEditRequest = TagEditRequest.builder()
-                .tags(Set.of("Spring, Java"))
+                .tags(Set.of("Spring", "Java"))
                 .build();
 
         String json = objectMapper.writeValueAsString(tagEditRequest);
@@ -345,8 +349,38 @@ class AccountControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.tagResponse.tags")
+                        .value(Matchers.containsInAnyOrder("Java", "Spring")))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @WithAccount
+    @DisplayName("태그 삭제 성공 테스트")
+    void deleteTag_with_correct_input() throws Exception {
+        // given
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        RestUserDetails principal = (RestUserDetails) authentication.getPrincipal();
+
+        Long accountId = principal.getAccountResponse().getId();
+
+        TagEditRequest tagAddRequest = TagEditRequest.builder().tags(Set.of("Spring", "Java")).build();
+        userDetailsService.addAccountTag(accountId, tagAddRequest);
+
+        TagEditRequest tagRemoveRequest = TagEditRequest.builder().tags(Set.of("Spring")).build();
+        String json = objectMapper.writeValueAsString(tagRemoveRequest);
+
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.delete("/tag/{accountId}", accountId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("태그가 성공적으로 삭제되었습니다."))
                 .andDo(MockMvcResultHandlers.print());
 
-        // then
+        Account account = accountRepository.findById(accountId).orElseThrow(AccountNotFoundException::new);
+        assertThat(account.getAccountTags()).hasSize(1)
+                .extracting(accountTag -> accountTag.getTag().getTitle())
+                .containsExactlyInAnyOrder("Java");
     }
 }

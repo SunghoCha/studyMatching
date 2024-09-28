@@ -1,12 +1,15 @@
 package study.studymatching_backend.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
+@Getter
+@EqualsAndHashCode(of = {"account", "tag"})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"account_id", "tag_id"}) // Service 단에서도 중복방지 로직 설정해야함
+})
 public class AccountTag {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

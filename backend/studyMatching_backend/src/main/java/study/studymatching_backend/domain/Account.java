@@ -105,7 +105,7 @@ public class Account {
         this.notification.updateNotification(notificationEditRequest);
     }
 
-    public void updateAccountTag(Set<AccountTag> accountTags) {
+    public void addAccountTag(Set<AccountTag> accountTags) {
         this.accountTags.addAll(accountTags);
     }
 }

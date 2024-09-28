@@ -60,7 +60,7 @@ export default {
     return {
       inputValue: '',
       tags: [],
-      availableTags: ['JavaScript', 'Vue.js', 'React', 'Node.js', 'CSS', 'HTML'],
+      availableTags: ['JavaScript', 'Vue.js', 'React', 'Node.js', 'CSS', 'HTML', 'Spring', 'Java'],
       suggestions: [],
       error: null,
     };
